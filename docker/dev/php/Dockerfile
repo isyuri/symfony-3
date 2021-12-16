@@ -1,5 +1,5 @@
 FROM composer:latest as composer
-FROM php:8.0-fpm-alpine as php
+FROM php:7.4-fpm-alpine as php
 
 RUN set -xe && apk update && apk upgrade
 
@@ -45,11 +45,15 @@ RUN docker-php-ext-install -j$(nproc) \
         exif \
         pdo_pgsql
 
+
 RUN pecl update-channels && \
     pecl install uuid && \
     docker-php-ext-enable uuid && \
     pecl install pcov && \
-    docker-php-ext-enable pcov
+    docker-php-ext-enable pcov && \
+    pecl install mongodb && \
+    docker-php-ext-enable mongodb
+
 
 RUN apk add gnu-libiconv --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
